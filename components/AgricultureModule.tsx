@@ -3,6 +3,8 @@ import { Sprout, Droplets, Camera, Loader2, Activity, ThermometerSun } from 'luc
 import { analyzeImageWithGemini, getTextAdvice } from '../services/geminiService';
 import { AnalysisResult } from '../types';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
 const parseMarkdownText = (text: string) => {
   let html = text
     .replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-800 font-bold">$1</strong>') // Bold
@@ -46,7 +48,7 @@ const AgricultureModule: React.FC = () => {
     setHealthLoading(true);
     try {
       // Step 1: Primary Local Model Inference (Hugging Face via Backend)
-      const hfResponse = await fetch('http://localhost:5000/api/analyze-plant', {
+      const hfResponse = await fetch(`${API_BASE_URL.replace(/\/$/, '')}/api/analyze-plant`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image }),

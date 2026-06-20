@@ -31,6 +31,8 @@ async def lifespan(app: FastAPI):
         sys.exit(1)
 
 app = FastAPI(lifespan=lifespan)
+HOST = os.environ.get("HOST", "0.0.0.0")
+PORT = int(os.environ.get("PORT", "5001"))
 
 class ImageRequest(BaseModel):
     image: str # base64 string
@@ -59,4 +61,4 @@ async def predict(request: ImageRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=5001)
+    uvicorn.run(app, host=HOST, port=PORT)

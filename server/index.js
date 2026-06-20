@@ -15,6 +15,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'ecosphere-secret-key-2026';
+const PYTHON_SERVICE_URL = process.env.PYTHON_SERVICE_URL || 'http://127.0.0.1:5001';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -61,7 +62,9 @@ const startServer = async () => {
       env: { 
         ...process.env, 
         PYTHONDONTWRITEBYTECODE: '1',
-        PYTHONUNBUFFERED: '1'
+        PYTHONUNBUFFERED: '1',
+        HOST: '0.0.0.0',
+        PORT: process.env.PYTHON_PORT || '5001'
       }
     });
 
@@ -102,7 +105,7 @@ const startServer = async () => {
   const callPythonInference = async (image, retries = 3, delay = 2000) => {
     for (let i = 0; i < retries; i++) {
       try {
-        const response = await fetch('http://127.0.0.1:5001/predict', {
+        const response = await fetch(`${PYTHON_SERVICE_URL.replace(/\/$/, '')}/predict`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image }),
